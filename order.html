@@ -79,6 +79,7 @@ textarea{resize:none;height:90px;line-height:1.5;}
 .copy-btn:active{background:#e0e0e0;}
 .copy-btn.copied{background:#f0fdf4;border-color:#bbf7d0;color:#15803d;}
 </style>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -179,6 +180,40 @@ document.getElementById('custPincode').addEventListener('input', function() {
 });
 
 // Generate Order ID
+// ── EMAILJS CONFIG ──
+const EMAILJS_SERVICE  = 'service_qfl9esm';
+const EMAILJS_TEMPLATE = 'template_51mb3oi';
+const EMAILJS_KEY      = 'bC2e5gy13OLcaYvsb';
+const NOTIFY_EMAIL     = 'paalkovvastore@gmail.com';
+
+// Init EmailJS
+(function(){
+  emailjs.init(EMAILJS_KEY);
+})();
+
+async function sendOrderNotification(orderId, name, phone, insta, address, pincode) {
+  try {
+    const now = new Date();
+    const timeStr = now.toLocaleDateString('en-IN', {
+      day:'2-digit', month:'short', year:'numeric',
+      hour:'2-digit', minute:'2-digit', hour12:true
+    });
+    await emailjs.send(EMAILJS_SERVICE, EMAILJS_TEMPLATE, {
+      to_email:         NOTIFY_EMAIL,
+      order_id:         orderId,
+      customer_name:    name,
+      customer_insta:   '@'+insta,
+      customer_phone:   phone,
+      customer_address: address,
+      customer_pincode: pincode,
+      order_time:       timeStr,
+    });
+    console.log('Email notification sent!');
+  } catch(e) {
+    console.log('Email failed (order still saved):', e);
+  }
+}
+
 async function genOrderId() {
   // Load current orders count to get next ID
   try {
@@ -219,7 +254,7 @@ async function submitOrder() {
   if(!address || address.length < 10) { showError('Please enter your full delivery address.'); return; }
 
   const pincode = document.getElementById('custPincode').value.trim();
-  if(!pincode || pincode.length !== 6 || !/^\d{6}$/.test(pincode)) { showError('Please enter a valid 6-digit pincode.'); return; }
+  if(!pincode || pincode.length !== 6 || !/^[0-9]{6}$/.test(pincode)) { showError('Please enter a valid 6-digit pincode.'); return; }
 
   // Show loading
   document.getElementById('formCard').style.display = 'none';
@@ -232,7 +267,6 @@ async function submitOrder() {
     const data = await loadData();
 
     // Create new order — customer fields only, rest blank for owner to fill
-    const pincode = document.getElementById('custPincode').value.trim();
     const fullAddress = address + ', Pincode: ' + pincode;
 
     const newOrder = {
@@ -262,6 +296,9 @@ async function submitOrder() {
 
     // Save back
     await saveData({...data, orders});
+
+    // Send email notification — don't await so it doesn't block UI
+    sendOrderNotification(orderId, name, phone, insta, address, pincode);
 
     // Show thank you
     document.getElementById('loadingCard').style.display = 'none';
