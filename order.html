@@ -148,8 +148,8 @@ textarea{resize:none;height:90px;line-height:1.5;}
       <div class="order-id-value" id="displayOrderId">—</div>
       <div class="order-id-hint">Share this ID when you contact us</div>
     </div>
-    <a class="whatsapp-btn" id="whatsappBtn" href="#" target="_blank">
-      💬 Message us on WhatsApp
+    <a class="whatsapp-btn" id="instaBtn" href="https://www.instagram.com/paalkovva.store?igsh=MWI4eHh6ZjZ0enRoNg%3D%3D&utm_source=qr" target="_blank" style="background:#000000;">
+      📸 Message us on Instagram
     </a>
   </div>
 </div>
@@ -159,7 +159,7 @@ textarea{resize:none;height:90px;line-height:1.5;}
 const BIN_ID  = '6a34f9b5da38895dfedc321a';
 const API_KEY = '$2a$10$nVQLCvRftpWMCRTEZi1XTeAWEIYPI.GpLQ7Y/3XMZXRIhmnEjYFK6';
 const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
-const WHATSAPP_NUMBER = '919xxxxxxxxx'; // ← Replace with your WhatsApp number (country code + number)
+// Instagram contact — no phone number needed
 
 // Character count for address
 document.getElementById('custAddress').addEventListener('input', function() {
@@ -268,9 +268,7 @@ async function submitOrder() {
     document.getElementById('thankYouCard').style.display = 'block';
     document.getElementById('displayOrderId').textContent = orderId;
 
-    // WhatsApp link
-    const msg = encodeURIComponent(`Hi Paalkovva.store! I just placed an order.\nOrder ID: ${orderId}\nName: ${name}\nPhone: ${phone}`);
-    document.getElementById('whatsappBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+    // Instagram link is fixed — no dynamic href needed
 
   } catch(e) {
     document.getElementById('loadingCard').style.display = 'none';
