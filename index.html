@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Paalkovva.store v5.7</title>
+<title>Paalkovva.store v5.8</title>
 <style>
 :root{
   --bg:#ffffff;--surface:#f5f5f5;--card:#ffffff;--border:#e8e8e8;
@@ -938,7 +938,7 @@ function openNewOrderModal() {
   editingOrderId = null;
   document.getElementById('orderModalTitle').textContent = 'New Order';
   document.getElementById('orderModalSub').textContent = 'Fill in customer & payment details';
-  document.getElementById('oId').value = 'ORD-'+Date.now().toString().slice(-5);
+  document.getElementById('oId').value = genOrderId();
   ['oName','oPhone','oProduct','oAddress','oNote'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('oTotal').value='';
   document.getElementById('oAdvance').value='';
@@ -980,6 +980,13 @@ function selectStatus(s, el) {
   el?.classList.add('selected');
 }
 
+function genOrderId() {
+  // Start from 2601, increment based on order count
+  const base = 2601;
+  const num = base + orders.length;
+  return String(num);
+}
+
 async function saveOrder() {
   const name = document.getElementById('oName').value.trim();
   if(!name){showToast('⚠️ Enter customer name');return;}
@@ -1000,7 +1007,7 @@ async function saveOrder() {
 
   const order = {
     id: editingOrderId||Date.now().toString(),
-    orderId: document.getElementById('oId').value||'ORD-'+Date.now().toString().slice(-5),
+    orderId: document.getElementById('oId').value||genOrderId(),
     name, total, advance, paid, status,
     payType: selectedPayType,
     phone: document.getElementById('oPhone').value.trim(),

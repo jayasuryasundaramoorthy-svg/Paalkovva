@@ -179,12 +179,18 @@ document.getElementById('custPincode').addEventListener('input', function() {
 });
 
 // Generate Order ID
-function genOrderId() {
-  const now = new Date();
-  const mm = String(now.getMonth()+1).padStart(2,'0');
-  const dd = String(now.getDate()).padStart(2,'0');
-  const rand = Math.floor(Math.random()*9000+1000);
-  return `PKV-${mm}${dd}-${rand}`;
+async function genOrderId() {
+  // Load current orders count to get next ID
+  try {
+    const data = await loadData();
+    const base = 2601;
+    const num = base + (Array.isArray(data.orders) ? data.orders.length : 0);
+    return String(num);
+  } catch(e) {
+    // Fallback if load fails
+    const base = 2601;
+    return String(base + Math.floor(Math.random()*100));
+  }
 }
 
 function showError(msg) {
@@ -219,7 +225,7 @@ async function submitOrder() {
   document.getElementById('formCard').style.display = 'none';
   document.getElementById('loadingCard').style.display = 'block';
 
-  const orderId = genOrderId();
+  const orderId = await genOrderId();
 
   // Load existing data first
   try {
