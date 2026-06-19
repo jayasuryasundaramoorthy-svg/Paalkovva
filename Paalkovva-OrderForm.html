@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Paalkovva.store — Place Order</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:#f9f9f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 40px;}
+
+/* HEADER */
+.header{width:100%;background:#000;padding:32px 20px 24px;text-align:center;margin-bottom:24px;}
+.header-logo{width:52px;height:52px;background:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#000;margin:0 auto 12px;}
+.header-name{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.3px;}
+.header-sub{font-size:13px;color:#888;margin-top:4px;}
+
+/* FORM CARD */
+.form-card{background:#fff;border-radius:20px;padding:24px 20px;width:calc(100% - 32px);max-width:420px;box-shadow:0 2px 16px rgba(0,0,0,.08);border:1px solid #efefef;}
+.form-title{font-size:17px;font-weight:700;color:#111;margin-bottom:4px;}
+.form-sub{font-size:13px;color:#888;margin-bottom:22px;line-height:1.5;}
+
+.form-group{margin-bottom:16px;}
+label{font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+input,textarea{width:100%;background:#f5f5f5;border:1.5px solid #e8e8e8;color:#111;font-family:inherit;font-size:15px;padding:13px 14px;border-radius:12px;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+input:focus,textarea:focus{border-color:#000;background:#fff;}
+textarea{resize:none;height:90px;line-height:1.5;}
+.input-hint{font-size:11px;color:#aaa;margin-top:5px;}
+
+.insta-wrap{position:relative;}
+.insta-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;color:#888;pointer-events:none;}
+.insta-wrap input{padding-left:28px;}
+
+.btn-submit{width:100%;padding:16px;border-radius:14px;border:none;background:#000;color:#fff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;transition:opacity .2s;}
+.btn-submit:active{opacity:.85;}
+.btn-submit:disabled{opacity:.5;cursor:not-allowed;}
+
+/* STEPS */
+.steps{display:flex;gap:6px;margin-bottom:22px;}
+.step-item{flex:1;text-align:center;}
+.step-circle{width:28px;height:28px;border-radius:50%;background:#f0f0f0;color:#aaa;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 5px;}
+.step-circle.active{background:#000;color:#fff;}
+.step-circle.done{background:#000;color:#fff;}
+.step-label{font-size:10px;color:#aaa;font-weight:500;}
+.step-label.active{color:#000;font-weight:600;}
+.step-line{flex:0 0 20px;height:1px;background:#e0e0e0;margin-top:14px;}
+
+/* THANK YOU */
+.thankyou{display:none;text-align:center;padding:10px 0;}
+.ty-icon{font-size:52px;margin-bottom:16px;}
+.ty-title{font-size:22px;font-weight:800;color:#111;margin-bottom:8px;}
+.ty-sub{font-size:14px;color:#666;line-height:1.6;margin-bottom:20px;}
+.order-id-box{background:#f5f5f5;border:1.5px solid #e0e0e0;border-radius:14px;padding:16px;margin-bottom:20px;}
+.order-id-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.order-id-value{font-size:26px;font-weight:800;color:#000;letter-spacing:1px;}
+.order-id-hint{font-size:12px;color:#aaa;margin-top:6px;}
+.whatsapp-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border-radius:14px;border:none;background:#25D366;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;}
+
+/* LOADING */
+.loading{display:none;text-align:center;padding:20px 0;}
+.spinner{width:36px;height:36px;border:3px solid #f0f0f0;border-top-color:#000;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:14px;color:#888;}
+
+/* ERROR */
+.error-msg{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 14px;font-size:13px;color:#dc2626;margin-bottom:14px;display:none;}
+
+.required{color:#dc2626;}
+.char-count{font-size:11px;color:#aaa;text-align:right;margin-top:4px;}
+
+.privacy-note{font-size:11px;color:#aaa;text-align:center;margin-top:16px;line-height:1.5;padding:0 10px;}
+
+/* COPY BUTTONS in order card — for main app */
+.copy-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f0f0;}
+.copy-row:last-child{border-bottom:none;}
+.copy-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.copy-value{font-size:14px;font-weight:600;color:#111;}
+.copy-btn{background:#f5f5f5;border:1px solid #e0e0e0;border-radius:8px;padding:6px 10px;font-size:12px;color:#555;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px;font-family:inherit;font-weight:500;transition:all .2s;}
+.copy-btn:active{background:#e0e0e0;}
+.copy-btn.copied{background:#f0fdf4;border-color:#bbf7d0;color:#15803d;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-logo">P</div>
+  <div class="header-name">Paalkovva.store</div>
+  <div class="header-sub">Fill your details to place an order</div>
+</div>
+
+<div class="form-card" id="formCard">
+  <div class="form-title">Order Details</div>
+  <div class="form-sub">Fill in your details below. We'll confirm your order shortly on WhatsApp or Instagram.</div>
+
+  <div id="errorMsg" class="error-msg"></div>
+
+  <div class="form-group">
+    <label>Full Name <span class="required">*</span></label>
+    <input type="text" id="custName" placeholder="Enter your full name" autocomplete="name"/>
+  </div>
+
+  <div class="form-group">
+    <label>Phone Number <span class="required">*</span></label>
+    <input type="tel" id="custPhone" placeholder="10-digit mobile number" inputmode="tel" maxlength="10"/>
+    <div class="input-hint">We'll confirm your order on this number</div>
+  </div>
+
+  <div class="form-group">
+    <label>Instagram ID <span class="required">*</span></label>
+    <div class="insta-wrap">
+      <span class="insta-prefix">@</span>
+      <input type="text" id="custInsta" placeholder="your_username" autocomplete="off" autocorrect="off" autocapitalize="off"/>
+    </div>
+    <div class="input-hint">So we can DM you if needed</div>
+  </div>
+
+  <div class="form-group">
+    <label>Delivery Address <span class="required">*</span></label>
+    <textarea id="custAddress" placeholder="House No / Flat, Street, Area, City, State"></textarea>
+    <div class="char-count" id="addrCount">0 / 300</div>
+  </div>
+
+  <div class="form-group">
+    <label>Pincode <span class="required">*</span></label>
+    <input type="text" id="custPincode" placeholder="6-digit pincode" inputmode="numeric" maxlength="6"/>
+    <div class="input-hint">Enter your area pincode for delivery</div>
+  </div>
+
+  <button class="btn-submit" id="submitBtn" onclick="submitOrder()">Place Order →</button>
+
+  <div class="privacy-note">🔒 Your details are only shared with Paalkovva.store and used for delivery purposes only.</div>
+</div>
+
+<!-- LOADING -->
+<div class="form-card loading" id="loadingCard">
+  <div class="spinner"></div>
+  <div class="loading-text">Placing your order...</div>
+</div>
+
+<!-- THANK YOU -->
+<div class="form-card thankyou" id="thankYouCard">
+  <div class="thankyou" style="display:block">
+    <div class="ty-icon">🎉</div>
+    <div class="ty-title">Order Placed!</div>
+    <div class="ty-sub">Thank you! Your order has been received. Save your Order ID below — you can use it to track your order.</div>
+    <div class="order-id-box">
+      <div class="order-id-label">Your Order ID</div>
+      <div class="order-id-value" id="displayOrderId">—</div>
+      <div class="order-id-hint">Share this ID when you contact us</div>
+    </div>
+    <a class="whatsapp-btn" id="whatsappBtn" href="#" target="_blank">
+      💬 Message us on WhatsApp
+    </a>
+  </div>
+</div>
+
+<script>
+// ── CONFIG — same JSONBin as main app ──
+const BIN_ID  = '6a34f9b5da38895dfedc321a';
+const API_KEY = '$2a$10$nVQLCvRftpWMCRTEZi1XTeAWEIYPI.GpLQ7Y/3XMZXRIhmnEjYFK6';
+const BIN_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const WHATSAPP_NUMBER = '919xxxxxxxxx'; // ← Replace with your WhatsApp number (country code + number)
+
+// Character count for address
+document.getElementById('custAddress').addEventListener('input', function() {
+  const len = this.value.length;
+  document.getElementById('addrCount').textContent = len + ' / 300';
+  if(len > 300) this.value = this.value.slice(0,300);
+});
+
+// Phone number — only digits
+document.getElementById('custPhone').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g,'');
+});
+
+// Pincode — only digits
+document.getElementById('custPincode').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g,'');
+});
+
+// Generate Order ID
+function genOrderId() {
+  const now = new Date();
+  const mm = String(now.getMonth()+1).padStart(2,'0');
+  const dd = String(now.getDate()).padStart(2,'0');
+  const rand = Math.floor(Math.random()*9000+1000);
+  return `PKV-${mm}${dd}-${rand}`;
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function hideError() {
+  document.getElementById('errorMsg').style.display = 'none';
+}
+
+async function submitOrder() {
+  hideError();
+
+  const name    = document.getElementById('custName').value.trim();
+  const phone   = document.getElementById('custPhone').value.trim();
+  const insta   = document.getElementById('custInsta').value.trim().replace('@','');
+  const address = document.getElementById('custAddress').value.trim();
+
+  // Validate
+  if(!name)          { showError('Please enter your full name.'); return; }
+  if(!phone || phone.length < 10) { showError('Please enter a valid 10-digit phone number.'); return; }
+  if(!insta)         { showError('Please enter your Instagram username.'); return; }
+  if(!address || address.length < 10) { showError('Please enter your full delivery address.'); return; }
+
+  const pincode = document.getElementById('custPincode').value.trim();
+  if(!pincode || pincode.length !== 6 || !/^\d{6}$/.test(pincode)) { showError('Please enter a valid 6-digit pincode.'); return; }
+
+  // Show loading
+  document.getElementById('formCard').style.display = 'none';
+  document.getElementById('loadingCard').style.display = 'block';
+
+  const orderId = genOrderId();
+
+  // Load existing data first
+  try {
+    const data = await loadData();
+
+    // Create new order — customer fields only, rest blank for owner to fill
+    const pincode = document.getElementById('custPincode').value.trim();
+    const fullAddress = address + ', Pincode: ' + pincode;
+
+    const newOrder = {
+      id:        Date.now().toString(),
+      orderId:   orderId,
+      name:      name,
+      phone:     phone,
+      insta:     '@'+insta,
+      address:   fullAddress,
+      pincode:   pincode,
+      product:   '',        // owner fills
+      total:     0,         // owner fills
+      advance:   0,
+      paid:      0,
+      payType:   'cod',     // default, owner can change
+      status:    'ordered',
+      note:      '',
+      by:        'Customer Form',
+      fromForm:  true,      // flag so owner knows it came from form
+      date:      new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Add to orders array
+    const orders = Array.isArray(data.orders) ? data.orders : [];
+    orders.unshift(newOrder);
+
+    // Save back
+    await saveData({...data, orders});
+
+    // Show thank you
+    document.getElementById('loadingCard').style.display = 'none';
+    document.getElementById('thankYouCard').style.display = 'block';
+    document.getElementById('displayOrderId').textContent = orderId;
+
+    // WhatsApp link
+    const msg = encodeURIComponent(`Hi Paalkovva.store! I just placed an order.\nOrder ID: ${orderId}\nName: ${name}\nPhone: ${phone}`);
+    document.getElementById('whatsappBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+
+  } catch(e) {
+    document.getElementById('loadingCard').style.display = 'none';
+    document.getElementById('formCard').style.display = 'block';
+    showError('Something went wrong. Please try again or contact us directly on WhatsApp.');
+  }
+}
+
+function loadData() {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', BIN_URL+'/latest', true);
+    xhr.setRequestHeader('X-Master-Key', API_KEY);
+    xhr.setRequestHeader('X-Bin-Meta', 'false');
+    xhr.timeout = 10000;
+    xhr.onload = function() {
+      if(xhr.status === 200) {
+        try { resolve(JSON.parse(xhr.responseText)); }
+        catch(e) { resolve({transactions:[],orders:[],pools:[],categories:[]}); }
+      } else { reject(new Error('Load failed')); }
+    };
+    xhr.onerror = () => reject(new Error('Network error'));
+    xhr.ontimeout = () => reject(new Error('Timeout'));
+    xhr.send();
+  });
+}
+
+function saveData(payload) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', BIN_URL, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-Master-Key', API_KEY);
+    xhr.timeout = 10000;
+    xhr.onload = function() {
+      if(xhr.status === 200) resolve();
+      else reject(new Error('Save failed'));
+    };
+    xhr.onerror = () => reject(new Error('Network error'));
+    xhr.ontimeout = () => reject(new Error('Timeout'));
+    xhr.send(JSON.stringify(payload));
+  });
+}
+</script>
+</body>
+</html>

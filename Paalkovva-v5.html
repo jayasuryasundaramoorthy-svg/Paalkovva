@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Paalkovva.store v5.7</title>
+<style>
+:root{
+  --bg:#ffffff;--surface:#f5f5f5;--card:#ffffff;--border:#e8e8e8;
+  --accent:#000000;--accent2:#222222;--green:#16a34a;--red:#dc2626;
+  --blue:#1d4ed8;--purple:#7c3aed;--yellow:#b45309;--teal:#0f766e;
+  --text:#111111;--muted:#888888;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;display:flex;flex-direction:column;height:100vh;}
+
+.topbar{padding:52px 18px 14px;background:#ffffff;border-bottom:1px solid #e8e8e8;flex-shrink:0;}
+.brand-row{display:flex;align-items:center;justify-content:space-between;}
+.brand-left{display:flex;align-items:center;gap:10px;}
+.brand-logo{width:36px;height:36px;border-radius:10px;background:#000000;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#ffffff;}
+.brand-name{font-size:18px;font-weight:800;letter-spacing:-.3px;}
+.brand-dot{color:#000000;}
+.brand-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.sync-badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;display:flex;align-items:center;gap:5px;}
+.sync-badge.synced{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;}
+.sync-badge.syncing{background:#f5f5f5;border:1px solid #e0e0e0;color:#888888;}
+.sync-badge.error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:88px;}
+.bottomnav{position:fixed;bottom:0;left:0;right:0;background:#ffffff;border-top:1px solid #e8e8e8;display:flex;padding:8px 0 26px;z-index:100;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;color:#aaaaaa;font-family:inherit;font-size:9px;font-weight:500;cursor:pointer;padding:5px 0;transition:color .15s;}
+.nav-btn .nav-icon{font-size:19px;}
+.nav-btn.active{color:#000000;font-weight:700;}
+
+.section{display:none;padding:14px;}
+.section.active{display:block;}
+.card{background:#ffffff;border-radius:16px;border:1px solid #e8e8e8;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
+
+/* DASHBOARD */
+.rev-banner{background:#f8f8f8;border:1px solid #e0e0e0;border-radius:18px;padding:18px;margin-bottom:12px;}
+.rev-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.rev-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+.rev-value{font-size:30px;font-weight:800;color:#000000;margin-top:4px;font-variant-numeric:tabular-nums;}
+.rev-right{text-align:right;}
+.rev-profit-label{font-size:11px;color:var(--muted);}
+.rev-profit{font-size:20px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums;}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.kpi-box{background:#ffffff;border-radius:14px;padding:13px;border:1px solid #e8e8e8;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.kpi-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#000000;}
+.kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;}
+.kpi-value{font-size:17px;font-weight:700;margin-top:5px;color:#000000;font-variant-numeric:tabular-nums;}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.pool-card{border-radius:14px;border:1px solid #e8e8e8;padding:14px 14px 14px 18px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;background:#ffffff;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.pool-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#000000;}
+.pool-left{display:flex;align-items:center;gap:11px;}
+.pool-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;background:color-mix(in srgb,var(--pc) 15%,transparent);}
+.pool-name{font-size:14px;font-weight:700;}
+.pool-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.pool-right{text-align:right;}
+.pool-bal{font-size:16px;font-weight:700;color:var(--pc);font-variant-numeric:tabular-nums;}
+.pool-tag{font-size:10px;color:var(--muted);}
+.savings-move-btn{width:100%;padding:14px;border-radius:13px;border:1px solid #000000;background:#000000;color:#ffffff;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;}
+.bar-wrap{margin-bottom:12px;}
+.bar-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;}
+.bar-track{height:6px;background:#eeeeee;border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+.margin-ring{width:110px;height:110px;margin:0 auto 14px;position:relative;display:flex;align-items:center;justify-content:center;}
+.margin-ring svg{position:absolute;top:0;left:0;transform:rotate(-90deg);}
+.margin-center{text-align:center;z-index:1;}
+.margin-pct{font-size:24px;font-weight:800;color:var(--accent);}
+.margin-label{font-size:11px;color:var(--muted);}
+
+/* PAYMENT TYPE TOGGLE */
+.pay-toggle{display:flex;gap:6px;margin-bottom:14px;}
+.pay-btn{flex:1;padding:12px 8px;border-radius:12px;border:1.5px solid #e0e0e0;background:#f8f8f8;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;color:#999999;text-align:center;}
+.pay-btn.cod.active{background:#000000;border-color:#000000;color:#ffffff;}
+.pay-btn.prepaid.active{background:#000000;border-color:#000000;color:#ffffff;}
+
+/* COD ADVANCE BOX */
+.cod-advance-box{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:14px;margin-bottom:14px;}
+.cod-label{font-size:12px;color:#92400e;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+/* ORDER STATUS */
+.status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.s-ordered{background:#f1f5f9;color:#475569;border:1px solid #cbd5e1;}
+.s-paid{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+
+.s-advance{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;}
+.s-shipped{background:#f0fdfa;color:#0f766e;border:1px solid #99f6e4;}
+.s-transit{background:#faf5ff;color:#7c3aed;border:1px solid #e9d5ff;}
+.s-delivered{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+.s-processing{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+.pay-type-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;}
+.pt-cod{background:#fefce8;color:#854d0e;border:1px solid #fde047;}
+.pt-prepaid{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+
+/* ORDER CARDS */
+.order-card{background:#ffffff;border-radius:14px;border:1px solid #e8e8e8;padding:14px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.order-card.needs-attention{border-color:#000000;border-width:1.5px;}
+.order-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
+.order-id{font-size:11px;color:var(--muted);font-weight:600;}
+.order-name{font-size:15px;font-weight:700;margin-top:2px;}
+.order-phone{font-size:12px;color:var(--muted);margin-top:2px;}
+.order-amount{text-align:right;}
+.order-total{font-size:16px;font-weight:700;color:var(--accent);}
+.order-paid-line{font-size:11px;margin-top:2px;}
+.order-balance{font-size:12px;color:var(--red);font-weight:600;margin-top:2px;}
+.order-product{font-size:12px;color:#666666;margin-bottom:10px;padding:8px;background:#f5f5f5;border-radius:8px;line-height:1.5;}
+.order-status-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.order-meta{font-size:10px;color:var(--muted);margin-left:auto;}
+.order-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.action-btn{flex:1;min-width:60px;padding:8px 6px;border-radius:9px;border:none;font-family:inherit;font-size:11px;font-weight:600;cursor:pointer;}
+.action-btn.edit{background:#f0f0f0;color:#000000;}
+.action-btn.status{background:#000000;color:#ffffff;}
+.action-btn.collect{background:#111111;color:#ffffff;}
+.action-btn.del{background:#fee2e2;color:#dc2626;}
+
+/* FILTER */
+.order-filters{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.order-filters::-webkit-scrollbar{display:none;}
+.o-chip{padding:6px 12px;border-radius:20px;border:1px solid #e0e0e0;background:#f5f5f5;color:#888888;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.o-chip.active{background:#000000;border-color:#000000;color:#ffffff;}
+
+/* FORMS */
+.type-toggle{display:flex;gap:8px;margin-bottom:14px;}
+.type-btn{flex:1;padding:12px;border-radius:13px;border:1.5px solid #e0e0e0;background:#f8f8f8;color:#aaaaaa;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.type-btn.expense.active{background:#000000;border-color:#000000;color:#ffffff;}
+.type-btn.income.active{background:rgba(34,197,94,.13);border-color:var(--green);color:var(--green);}
+.form-group{margin-bottom:13px;}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px;font-weight:500;}
+input,select,textarea{width:100%;background:#f8f8f8;border:1px solid #e0e0e0;color:#111111;font-family:inherit;font-size:16px;padding:12px 14px;border-radius:12px;outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:#000000;}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.amount-wrap{position:relative;}
+.amount-prefix{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;font-weight:700;color:var(--muted);pointer-events:none;}
+.amount-wrap input{padding-left:30px;font-size:20px;font-weight:700;}
+.btn-primary{width:100%;padding:15px;border-radius:14px;border:none;background:#000000;color:#ffffff;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .2s;margin-top:4px;}
+.btn-primary:active{transform:scale(.97);opacity:.9;}
+.btn-secondary{width:100%;padding:13px;border-radius:14px;border:1px solid #e0e0e0;background:transparent;color:#111111;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;}
+
+/* HISTORY */
+.filter-row{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{padding:6px 13px;border-radius:20px;border:1px solid #e0e0e0;background:#f5f5f5;color:#888888;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.filter-chip.active{background:#000000;border-color:#000000;color:#ffffff;}
+.tx-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.tx-item:last-child{border-bottom:none;}
+.tx-left{display:flex;align-items:center;gap:11px;flex:1;min-width:0;}
+.tx-dot{width:36px;height:36px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.tx-name{font-size:14px;font-weight:600;}
+.tx-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.tx-amount{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;flex-shrink:0;margin-left:8px;}
+.tx-amount.credit{color:var(--green);}
+.tx-amount.debit{color:var(--red);}
+.tx-amount.transfer{color:var(--purple);}
+.tx-by{font-size:10px;margin-top:1px;}
+
+/* STATUS OPTIONS */
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.status-opt{padding:11px;border-radius:12px;border:1.5px solid #e0e0e0;background:#f8f8f8;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;text-align:left;color:#888888;transition:all .2s;}
+.status-opt.s-ordered.selected{color:#000000;background:#f1f5f9;border-color:#000000;}
+.status-opt.s-advance.selected{color:#000000;background:#fff7ed;border-color:#000000;}
+.status-opt.s-paid.selected{color:#000000;background:#eff6ff;border-color:#000000;}
+
+.status-opt.s-shipped.selected{color:#000000;background:#f0fdfa;border-color:#000000;}
+.status-opt.s-transit.selected{color:#000000;background:#faf5ff;border-color:#000000;}
+.status-opt.s-delivered.selected{color:#000000;background:#f0fdf4;border-color:#000000;}
+.status-opt.s-processing.selected{color:#000000;background:#eff6ff;border-color:#000000;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:200;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal{background:#ffffff;border-radius:24px 24px 0 0;padding:20px 18px 44px;width:100%;border-top:1px solid #e8e8e8;max-height:92vh;overflow-y:auto;}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
+.modal-close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;margin-top:-4px;}
+
+/* ALERTS */
+.alert-banner{border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;font-size:13px;font-weight:500;}
+.alert-yellow{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+.alert-red{background:#1a1a1a;border:1px solid #333;color:var(--red);}
+
+/* SETUP */
+.step{display:flex;gap:12px;margin-bottom:16px;}
+.step-num{width:28px;height:28px;border-radius:50%;flex-shrink:0;background:#000000;color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.step-body{flex:1;}
+.step-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.manage-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.manage-row:last-child{border-bottom:none;}
+.del-btn{background:#fee2e2;border:none;border-radius:8px;padding:6px 10px;color:#dc2626;font-size:12px;cursor:pointer;font-family:inherit;}
+.add-row{display:flex;gap:8px;margin-top:10px;}
+.add-row input{flex:1;}
+.add-row button{padding:12px 16px;border-radius:12px;border:none;background:#000000;color:white;font-size:18px;cursor:pointer;}
+.user-pill{display:inline-flex;align-items:center;gap:6px;background:#f5f5f5;border:1px solid #e0e0e0;border-radius:20px;padding:6px 12px;font-size:13px;font-weight:500;color:#111111;}
+.user-dot{width:8px;height:8px;border-radius:50%;background:#000000;}
+.empty{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+.empty-icon{font-size:36px;margin-bottom:10px;}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#000000;color:#ffffff;padding:12px 22px;border-radius:30px;font-size:14px;font-weight:500;z-index:9999;box-shadow:0 4px 24px rgba(0,0,0,.2);white-space:nowrap;animation:toastIn .3s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.divider{height:1px;background:#e8e8e8;margin:14px 0;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px;}
+.info-row span:first-child{color:var(--muted);}
+.info-row span:last-child{font-weight:600;}
+
+/* COPY BUTTONS */
+.copy-field{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;background:#f8f8f8;border-radius:10px;margin-bottom:6px;}
+.copy-field-info{flex:1;min-width:0;}
+.copy-field-label{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.copy-field-value{font-size:13px;font-weight:600;color:#111;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.copy-btn{flex-shrink:0;background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:6px 10px;font-size:11px;color:#555;cursor:pointer;display:flex;align-items:center;gap:3px;font-family:inherit;font-weight:600;transition:all .15s;white-space:nowrap;}
+.copy-btn:active{transform:scale(.95);}
+.copy-btn.copied{background:#f0fdf4;border-color:#bbf7d0;color:#15803d;}
+.copy-section{margin-bottom:10px;}
+.copy-section-title{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand-row">
+    <div class="brand-left">
+      <div class="brand-logo">P</div>
+      <div>
+        <div class="brand-name">Paalkovva<span class="brand-dot">.store</span></div>
+        <div class="brand-sub" id="loggedInAs">Not logged in</div>
+      </div>
+    </div>
+    <div class="sync-badge syncing" id="syncBadge"><div class="sync-dot"></div><span id="syncText">Connecting</span></div>
+  </div>
+</div>
+
+<div class="body" id="mainBody">
+
+  <!-- DASHBOARD -->
+  <div class="section" id="sec-home">
+    <div id="dashAlerts"></div>
+    <div class="rev-banner">
+      <div class="rev-top">
+        <div><div class="rev-label">Total Revenue</div><div class="rev-value" id="totalRevenue">₹0</div></div>
+        <div class="rev-right"><div class="rev-profit-label">Net Profit</div><div class="rev-profit" id="netProfit">₹0</div></div>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-box" style="--kc:var(--green)"><div class="kpi-label">Total Orders</div><div class="kpi-value" id="kpiOrders">0</div><div class="kpi-sub">All time</div></div>
+      <div class="kpi-box" style="--kc:var(--yellow)"><div class="kpi-label">Pending Balance</div><div class="kpi-value" id="kpiPending">₹0</div><div class="kpi-sub">To collect</div></div>
+      <div class="kpi-box" style="--kc:var(--blue)"><div class="kpi-label">COD Orders</div><div class="kpi-value" id="kpiCod">0</div><div class="kpi-sub">Cash on delivery</div></div>
+      <div class="kpi-box" style="--kc:var(--teal)"><div class="kpi-label">Prepaid Orders</div><div class="kpi-value" id="kpiPrepaid">0</div><div class="kpi-sub">Fully paid</div></div>
+    </div>
+    <div class="card"><div class="card-title">Order Pipeline</div><div id="orderPipeline"></div></div>
+    <button class="savings-move-btn" onclick="openSavingsModal()">🏦 Move Cash to Savings</button>
+    <div class="card"><div class="card-title">Cash Pools</div><div id="poolCards"></div></div>
+    <div class="card">
+      <div class="card-title">Profit Margin</div>
+      <div class="margin-ring">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle cx="55" cy="55" r="46" fill="none" stroke="#1e2535" stroke-width="10"/>
+          <circle cx="55" cy="55" r="46" fill="none" stroke="#000000" stroke-width="10" stroke-dasharray="289" id="marginArc" stroke-dashoffset="289" stroke-linecap="round"/>
+        </svg>
+        <div class="margin-center"><div class="margin-pct" style="color:#000000" id="marginPct">0%</div><div class="margin-label">margin</div></div>
+      </div>
+      <div id="expenseBars"></div>
+    </div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="section" id="sec-orders">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div style="font-size:16px;font-weight:700">Customer Orders</div>
+      <button class="btn-primary" style="width:auto;padding:10px 16px;font-size:13px;margin:0" onclick="openNewOrderModal()">＋ New Order</button>
+    </div>
+    <div class="order-filters" id="orderFilters"></div>
+    <div id="ordersList"></div>
+  </div>
+
+  <!-- ADD TRANSACTION -->
+  <div class="section" id="sec-add">
+    <div class="card">
+      <div class="card-title">Transaction Type</div>
+      <div class="type-toggle">
+        <button class="type-btn expense active" id="btnExp" onclick="setType('expense')">↑ Expense</button>
+        <button class="type-btn income" id="btnInc" onclick="setType('income')">↓ Revenue</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Details</div>
+      <div class="form-group"><label>Amount (₹)</label><div class="amount-wrap"><span class="amount-prefix">₹</span><input type="number" id="txAmt" placeholder="0" inputmode="decimal"/></div></div>
+      <div class="form-group"><label>Category</label><select id="txCat" onchange="catChanged()"></select></div>
+      <div class="form-group"><label>Cash Pool</label><select id="txPool"></select></div>
+      <div class="form-group"><label>Purpose / Note</label><input type="text" id="txNote" placeholder="e.g. Facebook ads June"/></div>
+      <div class="form-group" id="orderGroup" style="display:none"><label>Order ID (optional)</label><input type="text" id="txOrder" placeholder="e.g. ORD-001"/></div>
+      <button class="btn-primary" onclick="saveTransaction()">✓ Save Transaction</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="section" id="sec-history">
+    <div class="filter-row" id="filterRow"></div>
+    <div class="card"><div class="card-title" id="historyTitle">All Transactions</div><div id="historyList"></div></div>
+  </div>
+
+  <!-- SETUP -->
+  <div class="section" id="sec-setup">
+    <div class="card" style="text-align:center;padding:20px">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Logged in as</div>
+      <div class="user-pill" style="margin:0 auto"><div class="user-dot"></div><span id="userPillName">—</span></div>
+      <button class="btn-primary" style="margin-top:14px" onclick="switchUser()">Switch Account</button>
+    </div>
+    <div class="card">
+      <div class="card-title">💾 Data Storage</div>
+      <div class="info-row"><span>Storage</span><span style="color:var(--green)">☁️ JSONBin Cloud</span></div>
+      <div class="info-row"><span>Auto-sync</span><span style="color:var(--green)">Every 25 seconds</span></div>
+      <div class="info-row"><span>Data expiry</span><span style="color:var(--green)">Never expires ✅</span></div>
+      <div class="info-row"><span>Local backup</span><span style="color:var(--green)">Always saved ✅</span></div>
+      <div class="info-row"><span>Total orders</span><span id="dataOrders">0</span></div>
+      <div class="info-row"><span>Total transactions</span><span id="dataTx">0</span></div>
+      <button class="btn-primary" style="margin-top:10px" onclick="forceSave()">☁️ Force Sync Now</button>
+    </div>
+    <div class="card"><div class="card-title">Cash Pools</div><div id="poolMgr"></div></div>
+    <div class="card">
+      <div class="card-title">Categories</div>
+      <div id="catMgr"></div>
+      <div class="add-row"><input type="text" id="newCatName" placeholder="New category"/><button onclick="addCategory()">＋</button></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Share with Girlfriend</div>
+      <div style="font-size:13px;color:#888888;margin-bottom:12px;line-height:1.6">Share this URL with your wife. She opens in Chrome, selects Wife — you both see the same live data.</div>
+      <button class="btn-primary" onclick="copyURL()">📋 Copy App URL</button>
+    </div>
+    <div class="card">
+      <div class="card-title">📱 Back Tap Setup</div>
+      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Copy URL above</div><div class="step-desc">Tap "Copy App URL".</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Create Shortcut</div><div class="step-desc">Shortcuts → ＋ → Add Action → "Open URLs" → paste → name it <b>Paalkovva</b>.</div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Back Tap</div><div class="step-desc">Settings → Accessibility → Touch → Back Tap → Double Tap → <b>Paalkovva</b></div></div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottomnav">
+  <button class="nav-btn" id="nav-home" onclick="goTo('home')"><span class="nav-icon">📊</span>Dashboard</button>
+  <button class="nav-btn" id="nav-orders" onclick="goTo('orders')"><span class="nav-icon">📦</span>Orders</button>
+  <button class="nav-btn active" id="nav-add" onclick="goTo('add')"><span class="nav-icon">➕</span>Add</button>
+  <button class="nav-btn" id="nav-history" onclick="goTo('history')"><span class="nav-icon">📋</span>History</button>
+  <button class="nav-btn" id="nav-setup" onclick="goTo('setup')"><span class="nav-icon">⚙️</span>Setup</button>
+</div>
+
+<!-- NEW ORDER MODAL -->
+<div class="modal-overlay" id="newOrderModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('newOrderModal')">✕</button>
+    <div class="modal-title" id="orderModalTitle">New Order</div>
+    <div class="modal-sub" id="orderModalSub">Fill in customer & payment details</div>
+
+    <!-- Payment Type -->
+    <div class="form-group">
+      <label>Payment Type</label>
+      <div class="pay-toggle">
+        <button class="pay-btn cod active" id="payBtnCod" onclick="setPayType('cod')">🏠 COD<br><small style="font-size:10px;font-weight:400">Cash on Delivery</small></button>
+        <button class="pay-btn prepaid" id="payBtnPrepaid" onclick="setPayType('prepaid')">✅ Prepaid<br><small style="font-size:10px;font-weight:400">Already Paid</small></button>
+      </div>
+    </div>
+
+    <!-- COD Advance box — shown only for COD -->
+    <div class="cod-advance-box" id="codAdvanceBox">
+      <div class="cod-label">COD — Collect Advance Payment</div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Advance Amount Collected (₹)</label>
+        <div class="amount-wrap"><span class="amount-prefix">₹</span><input type="number" id="oAdvance" placeholder="0" inputmode="decimal"/></div>
+      </div>
+    </div>
+
+    <div class="form-group"><label>Order ID</label><input type="text" id="oId" placeholder="Auto-generated"/></div>
+    <div class="form-group"><label>Customer Name</label><input type="text" id="oName" placeholder="Full name"/></div>
+    <div class="form-group"><label>Phone Number</label><input type="tel" id="oPhone" placeholder="10-digit number" inputmode="tel"/></div>
+    <div class="form-group"><label>Product / Item</label><input type="text" id="oProduct" placeholder="e.g. Paalkovva Special Pack x2"/></div>
+    <div class="form-group"><label>Delivery Address</label><input type="text" id="oAddress" placeholder="City, State or full address"/></div>
+    <div class="form-group"><label>Total Order Amount (₹)</label><div class="amount-wrap"><span class="amount-prefix">₹</span><input type="number" id="oTotal" placeholder="0" inputmode="decimal" oninput="onTotalChange()"/></div></div>
+
+    <!-- Prepaid paid amount — shown only for prepaid -->
+    <div id="prepaidPaidBox" style="display:none">
+      <div class="form-group">
+        <label>Amount Paid (₹)</label>
+        <div class="amount-wrap"><span class="amount-prefix">₹</span><input type="number" id="oPaid" placeholder="0" inputmode="decimal"/></div>
+      </div>
+    </div>
+
+    <div class="form-group"><label>Status</label>
+      <div class="status-grid" id="statusGrid">
+        <button class="status-opt s-ordered selected" onclick="selectStatus('ordered',this)">Ordered</button>
+        <button class="status-opt s-advance" onclick="selectStatus('advance',this)">Advance Paid</button>
+        <button class="status-opt s-paid" onclick="selectStatus('paid',this)">Fully Paid</button>
+        <button class="status-opt s-processing" onclick="selectStatus('processing',this)">Processing</button>
+        <button class="status-opt s-shipped" onclick="selectStatus('shipped',this)">Shipped</button>
+        <button class="status-opt s-transit" onclick="selectStatus('transit',this)">In Transit</button>
+        <button class="status-opt s-delivered" onclick="selectStatus('delivered',this)">Delivered</button>
+      </div>
+    </div>
+
+    <div class="form-group"><label>Note (optional)</label><input type="text" id="oNote" placeholder="Any extra details"/></div>
+    <button class="btn-primary" onclick="saveOrder()">Save Order ✓</button>
+    <button class="btn-secondary" onclick="closeModal('newOrderModal')">Cancel</button>
+  </div>
+</div>
+
+<!-- STATUS UPDATE MODAL -->
+<div class="modal-overlay" id="statusModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('statusModal')">✕</button>
+    <div class="modal-title">Update Status</div>
+    <div class="modal-sub" id="statusOrderInfo"></div>
+    <div class="status-grid" id="statusUpdateGrid"></div>
+    <div id="collectSection" style="display:none">
+      <div class="divider"></div>
+      <div style="font-size:13px;font-weight:600;color:#111111;margin-bottom:10px">Collect Balance Payment</div>
+      <div class="info-row"><span>Total Amount</span><span id="collectTotal">₹0</span></div>
+      <div class="info-row"><span>Already Paid</span><span style="color:var(--green)" id="collectPaid">₹0</span></div>
+      <div class="info-row"><span>Balance Due</span><span style="color:var(--red)" id="collectDue">₹0</span></div>
+      <div class="divider"></div>
+      <div class="form-group"><label>Amount Collecting Now (₹)</label><div class="amount-wrap"><span class="amount-prefix">₹</span><input type="number" id="collectAmt" placeholder="0" inputmode="decimal"/></div></div>
+    </div>
+    <button class="btn-primary" onclick="confirmStatusUpdate()">Update ✓</button>
+  </div>
+</div>
+
+<!-- SAVINGS MODAL -->
+<div class="modal-overlay" id="savingsModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('savingsModal')">✕</button>
+    <div class="modal-title">🏦 Move to Savings</div>
+    <div class="form-group"><label>Available Business Cash</label><div style="font-size:22px;font-weight:700;color:var(--accent);margin-bottom:12px" id="availCash">₹0</div></div>
+    <div class="form-group"><label>Amount (₹)</label><div class="amount-wrap"><span class="amount-prefix">₹</span><input type="number" id="saveAmt" placeholder="0" inputmode="decimal"/></div></div>
+    <div class="form-group"><label>Note</label><input type="text" id="saveNote" placeholder="e.g. Weekly profit transfer"/></div>
+    <button class="btn-primary" onclick="moveToSavings()">Move to Savings ✓</button>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="modal-overlay open" id="userModal">
+  <div class="modal">
+    <div class="modal-title">👋 Who are you?</div>
+    <div class="modal-sub">Your name will show on every entry</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <button class="btn-primary" onclick="setUser('Husband')">Husband</button>
+      <button class="btn-primary" style="background:#444444;" onclick="setUser('Wife')">♾️ Wife</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG — JSONBin (data never expires)
+// ══════════════════════════════════════════
+const BIN_ID   = '6a34f9b5da38895dfedc321a';
+const API_KEY  = '$2a$10$nVQLCvRftpWMCRTEZi1XTeAWEIYPI.GpLQ7Y/3XMZXRIhmnEjYFK6';
+const BIN_URL  = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const BACKUP_KEY = 'pv_backup_v2';
+
+// ══════════════════════════════════════════
+// STATUS CONFIG
+// ══════════════════════════════════════════
+const SC = {
+  ordered:    {label:'Ordered',      icon:'', cls:'s-ordered'},
+  advance:    {label:'Advance Paid', icon:'', cls:'s-advance'},
+  paid:       {label:'Fully Paid',   icon:'', cls:'s-paid'},
+  processing: {label:'Processing',   icon:'', cls:'s-processing'},
+  shipped:    {label:'Shipped',      icon:'', cls:'s-shipped'},
+  transit:    {label:'In Transit',   icon:'', cls:'s-transit'},
+  delivered:  {label:'Delivered',    icon:'', cls:'s-delivered'},
+};
+const STATUS_ORDER = ['ordered','advance','paid','processing','shipped','transit','delivered'];
+
+// ══════════════════════════════════════════
+// DEFAULT DATA
+// ══════════════════════════════════════════
+const DEF_POOLS = [
+  {id:'p1',name:'Business Cash',    icon:'💰',color:'#f97316'},
+  {id:'p2',name:'Raw Materials',    icon:'📦',color:'#f43f5e'},
+  {id:'p3',name:'Ad Budget',        icon:'📣',color:'#3b82f6'},
+  {id:'p4',name:'Rapidshyp Wallet', icon:'🚚',color:'#eab308'},
+  {id:'p5',name:'Savings',          icon:'🏦',color:'#a855f7'},
+];
+const DEF_CATS = [
+  {id:'c1', name:'Raw Material Purchase',    type:'expense', pool:'p2', icon:'📦'},
+  {id:'c2', name:'Facebook / Instagram Ads', type:'expense', pool:'p3', icon:'📣'},
+  {id:'c3', name:'Google Ads',               type:'expense', pool:'p3', icon:'🔍'},
+  {id:'c4', name:'Rapidshyp Shipping',       type:'expense', pool:'p4', icon:'🚚'},
+  {id:'c5', name:'Rapidshyp COD Charge',     type:'expense', pool:'p4', icon:'💳'},
+  {id:'c6', name:'Packaging Material',       type:'expense', pool:'p2', icon:'🎁'},
+  {id:'c7', name:'Other Business Expense',   type:'expense', pool:'p1', icon:'💸'},
+  {id:'c8', name:'Customer Order Payment',   type:'income',  pool:'p1', icon:'🛒'},
+  {id:'c9', name:'COD Collection',           type:'income',  pool:'p1', icon:'💵'},
+  {id:'c10',name:'Online Payment',           type:'income',  pool:'p1', icon:'📱'},
+  {id:'c11',name:'Bulk Order',               type:'income',  pool:'p1', icon:'📦'},
+  {id:'c12',name:'COD Advance Collected',    type:'income',  pool:'p1', icon:'💛'},
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let pools = DEF_POOLS, categories = DEF_CATS;
+let transactions = [], orders = [];
+let txType = 'expense', activeFilter = 'All', orderFilter = 'All';
+let currentUser = localStorage.getItem('pv_user') || '';
+// Migrate old values
+if(currentUser === 'Owner') { currentUser = 'Husband'; localStorage.setItem('pv_user','Husband'); }
+if(currentUser === 'Girlfriend') { currentUser = 'Wife'; localStorage.setItem('pv_user','Wife'); }
+let isSaving = false, currentSection = 'add';
+let selectedStatus = 'ordered', selectedPayType = 'cod';
+let editingOrderId = null, statusUpdateOrderId = null;
+
+// ══════════════════════════════════════════
+// CLOUD SYNC — PERMANENT STORAGE
+// ══════════════════════════════════════════
+async function loadFromCloud() {
+  setSyncStatus('syncing','Syncing...');
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', BIN_URL+'/latest', true);
+    xhr.setRequestHeader('X-Master-Key', API_KEY);
+    xhr.setRequestHeader('X-Bin-Meta', 'false');
+    xhr.timeout = 8000;
+    xhr.onload = function() {
+      try {
+        if(xhr.status === 200) {
+          const data = JSON.parse(xhr.responseText);
+          if (Array.isArray(data.transactions)) transactions = data.transactions;
+          if (Array.isArray(data.orders)) orders = data.orders;
+          if (Array.isArray(data.pools) && data.pools.length > 0) pools = data.pools;
+          if (Array.isArray(data.categories) && data.categories.length > 0) categories = data.categories;
+          backupLocally();
+          setSyncStatus('synced','Live ✓');
+          refreshCurrentSection();
+        } else {
+          throw new Error('status '+xhr.status);
+        }
+      } catch(e) {
+        setSyncStatus('error','Offline');
+        restoreFromBackup();
+      }
+      resolve();
+    };
+    xhr.onerror = function() {
+      setSyncStatus('error','Offline');
+      restoreFromBackup();
+      resolve();
+    };
+    xhr.ontimeout = function() {
+      setSyncStatus('error','Offline');
+      restoreFromBackup();
+      resolve();
+    };
+    xhr.send();
+  });
+}
+
+async function saveToCloud(retries = 3) {
+  if (isSaving) return;
+  isSaving = true;
+  setSyncStatus('syncing','Saving...');
+  backupLocally();
+  const payload = { transactions, orders, pools, categories, lastSaved: new Date().toISOString() };
+
+  return new Promise((resolve) => {
+    let attempt = 0;
+    function trySave() {
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', BIN_URL, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('X-Master-Key', API_KEY);
+      xhr.timeout = 8000;
+      xhr.onload = function() {
+        if(xhr.status === 200) {
+          setSyncStatus('synced','Saved ✓');
+          setTimeout(()=>setSyncStatus('synced','Live ✓'), 2000);
+          isSaving = false;
+          resolve();
+        } else {
+          retry();
+        }
+      };
+      xhr.onerror = retry;
+      xhr.ontimeout = retry;
+      xhr.send(JSON.stringify(payload));
+    }
+    function retry() {
+      attempt++;
+      if(attempt < retries) {
+        setTimeout(trySave, 1500);
+      } else {
+        setSyncStatus('error','Offline — Data backed up');
+        showToast('⚠️ Saved locally. Will sync when online.');
+        isSaving = false;
+        resolve();
+      }
+    }
+    trySave();
+  });
+}
+
+function backupLocally() {
+  try {
+    const d = { transactions, orders, pools, categories, savedAt: new Date().toISOString() };
+    localStorage.setItem(BACKUP_KEY, JSON.stringify(d));
+    // Also keep a second backup
+    localStorage.setItem(BACKUP_KEY+'_prev', localStorage.getItem(BACKUP_KEY)||'{}');
+  } catch(e) {}
+}
+
+function restoreFromBackup() {
+  try {
+    const raw = localStorage.getItem(BACKUP_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      if (Array.isArray(d.transactions)) transactions = d.transactions;
+      if (Array.isArray(d.orders)) orders = d.orders;
+      if (Array.isArray(d.pools) && d.pools.length) pools = d.pools;
+      if (Array.isArray(d.categories) && d.categories.length) categories = d.categories;
+      refreshCurrentSection();
+      showToast('📱 Loaded from local backup');
+    }
+  } catch(e) {}
+}
+
+function setSyncStatus(type, text) {
+  document.getElementById('syncBadge').className = 'sync-badge '+type;
+  document.getElementById('syncText').textContent = text;
+}
+
+async function forceSave() {
+  await saveToCloud();
+  showToast('☁️ Force synced!');
+}
+
+// Auto refresh every 25s
+setInterval(loadFromCloud, 25000);
+
+// Save before page close
+window.addEventListener('beforeunload', backupLocally);
+
+// ══════════════════════════════════════════
+// USER
+// ══════════════════════════════════════════
+function setUser(name) {
+  currentUser = name;
+  localStorage.setItem('pv_user', name);
+  document.getElementById('loggedInAs').textContent = name==='Husband' ? 'Husband' : '♾️ Wife';
+  document.getElementById('userPillName').textContent = name==='Husband' ? 'Husband' : '♾️ Wife';
+  closeModal('userModal');
+  loadFromCloud();
+  goTo('add');
+}
+function switchUser() { document.getElementById('userModal').classList.add('open'); }
+
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+function goTo(name) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  document.getElementById('nav-'+name).classList.add('active');
+  currentSection = name;
+  document.getElementById('mainBody').scrollTop = 0;
+  if(name==='home') renderHome();
+  if(name==='orders') renderOrders();
+  if(name==='add') renderAddForm();
+  if(name==='history') renderHistory();
+  if(name==='setup') renderSetup();
+}
+function refreshCurrentSection() {
+  if(currentSection==='home') renderHome();
+  else if(currentSection==='orders') renderOrders();
+  else if(currentSection==='history') renderHistory();
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+function calcStats() {
+  let revenue=0,rawMat=0,ads=0,shipping=0,saved=0,totalExp=0;
+  const pd={};
+  pools.forEach(p=>pd[p.id]={in:0,out:0});
+  transactions.forEach(tx=>{
+    if(!pd[tx.pool]) return;
+    if(tx.type==='income'){revenue+=tx.amount;pd[tx.pool].in+=tx.amount;}
+    else if(tx.type==='transfer'){pd[tx.pool].out+=tx.amount;if(tx.toPool&&pd[tx.toPool])pd[tx.toPool].in+=tx.amount;saved+=tx.amount;}
+    else{totalExp+=tx.amount;pd[tx.pool].out+=tx.amount;}
+    if(['c1','c6'].includes(tx.cat)) rawMat+=tx.amount;
+    if(['c2','c3'].includes(tx.cat)) ads+=tx.amount;
+    if(['c4','c5'].includes(tx.cat)) shipping+=tx.amount;
+  });
+  return{revenue,rawMat,ads,shipping,saved,totalExp,pd};
+}
+
+function renderHome() {
+  const {revenue,rawMat,ads,shipping,saved,totalExp,pd} = calcStats();
+  const profit = revenue - totalExp;
+  const margin = revenue>0 ? Math.round((profit/revenue)*100) : 0;
+
+  // Alerts
+  const partial = orders.filter(o=>['advance','ordered'].includes(o.status)&&(o.total-(o.paid||0)-(o.advance||0))>0);
+  const totalPending = partial.reduce((s,o)=>s+(o.total-(o.paid||0)-(o.advance||0)),0);
+  const alerts = [];
+  if(partial.length) alerts.push(`<div class="alert-banner alert-yellow">⚠️ ${partial.length} order${partial.length>1?'s':''} with balance pending — ${fmt(totalPending)} to collect</div>`);
+  document.getElementById('dashAlerts').innerHTML = alerts.join('');
+
+  document.getElementById('totalRevenue').textContent = fmt(revenue);
+  document.getElementById('netProfit').textContent = fmt(profit);
+  document.getElementById('netProfit').style.color = profit>=0?'var(--green)':'var(--red)';
+  document.getElementById('kpiOrders').textContent = orders.length;
+  document.getElementById('kpiPending').textContent = fmt(totalPending);
+  document.getElementById('kpiCod').textContent = orders.filter(o=>o.payType==='cod').length;
+  document.getElementById('kpiPrepaid').textContent = orders.filter(o=>o.payType==='prepaid').length;
+
+  // Pipeline
+  const counts = {};
+  STATUS_ORDER.forEach(s=>counts[s]=0);
+  orders.forEach(o=>{ if(counts[o.status]!==undefined) counts[o.status]++; });
+  document.getElementById('orderPipeline').innerHTML =
+    `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+      ${STATUS_ORDER.map(s=>`
+        <div onclick="goTo('orders');setTimeout(()=>setOrderFilter('${s}'),100)" style="background:#f5f5f5;border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;border:1px solid #e8e8e8">
+          <div style="font-size:16px;color:#cccccc">·</div>
+          <div style="font-size:17px;font-weight:700;margin-top:2px">${counts[s]}</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px;line-height:1.2">${SC[s].label}</div>
+        </div>`).join('')}
+    </div>`;
+
+  // Pool cards
+  document.getElementById('poolCards').innerHTML = pools.map(p=>{
+    const d = pd[p.id]||{in:0,out:0};
+    return `<div class="pool-card" style="--pc:${p.color}">
+      <div class="pool-left"><div class="pool-icon" style="--pc:${p.color}">${p.icon}</div>
+      <div><div class="pool-name">${p.name}</div><div class="pool-sub">In: ${fmt(d.in)} · Out: ${fmt(d.out)}</div></div></div>
+      <div class="pool-right"><div class="pool-bal" style="color:#000000">${fmt(d.in-d.out)}</div><div class="pool-tag">balance</div></div>
+    </div>`;
+  }).join('');
+
+  const offset = 289-(Math.min(Math.max(margin,0),100)/100)*289;
+  document.getElementById('marginArc').setAttribute('stroke-dashoffset',offset);
+  document.getElementById('marginPct').textContent = margin+'%';
+
+  const expItems=[{label:'Raw Materials',val:rawMat,color:'var(--red)'},{label:'Ad Spend',val:ads,color:'var(--blue)'},{label:'Rapidshyp',val:shipping,color:'var(--yellow)'}];
+  const maxE=Math.max(...expItems.map(e=>e.val),1);
+  document.getElementById('expenseBars').innerHTML = expItems.map(e=>
+    `<div class="bar-wrap"><div class="bar-top"><span>${e.label}</span><span style="color:${e.color};font-weight:600">${fmt(e.val)}</span></div>
+    <div class="bar-track"><div class="bar-fill" style="width:${Math.round((e.val/maxE)*100)}%;background:${e.color}"></div></div></div>`
+  ).join('');
+
+  const bizCash=pd['p1']?pd['p1'].in-pd['p1'].out:0;
+  document.getElementById('availCash').textContent=fmt(Math.max(bizCash,0));
+}
+
+// ══════════════════════════════════════════
+// ORDERS
+// ══════════════════════════════════════════
+function renderOrders() {
+  const filters = ['All', ...STATUS_ORDER.map(s=>SC[s].label)];
+  document.getElementById('orderFilters').innerHTML = filters.map(f=>{
+    const active = f===orderFilter ? 'active' : '';
+    const escaped = f.replace(/"/g,'&quot;');
+    return '<button class="o-chip '+active+'" onclick="setOrderFilter(this.dataset.f)" data-f="'+escaped+'">'+f+'</button>';
+  }).join('');;
+
+  let filtered = [...orders].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  if(orderFilter!=='All') {
+    const key = Object.keys(SC).find(k=>SC[k].label===orderFilter);
+    if(key) filtered = filtered.filter(o=>o.status===key);
+  }
+
+  const list = document.getElementById('ordersList');
+
+  if(!filtered.length) {
+    list.innerHTML='<div class="empty"><div class="empty-icon">📭</div>No orders yet<br><small style="font-size:12px">Tap &quot;+ New Order&quot; to add</small></div>';
+    return;
+  }
+
+  // Build using DOM — zero template literal nesting issues
+  list.innerHTML = '';
+  filtered.forEach(o => {
+    const sc      = SC[o.status]||SC.ordered;
+    const advance = o.advance||0;
+    const paid    = o.paid||0;
+    const balance = o.total - advance - paid;
+    const needsAttention = balance > 0 && ['advance','ordered'].includes(o.status);
+    const d  = new Date(o.date);
+    const ds = d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'2-digit'});
+
+    const card = document.createElement('div');
+    card.className = 'order-card' + (needsAttention?' needs-attention':'');
+
+    // ── TOP ROW ──
+    const top = document.createElement('div');
+    top.className = 'order-top';
+    top.innerHTML =
+      '<div>' +
+        '<div class="order-id">#'+o.orderId+' · '+ds+'</div>' +
+        '<div class="order-name">'+o.name+'</div>' +
+      '</div>' +
+      '<div class="order-amount">' +
+        '<div class="order-total">'+fmt(o.total)+'</div>' +
+        (advance>0?'<div class="order-paid-line" style="color:#b45309">Advance: '+fmt(advance)+'</div>':'')+
+        (paid>0?'<div class="order-paid-line" style="color:var(--green)">Paid: '+fmt(paid)+'</div>':'')+
+        (balance>0?'<div class="order-balance">Due: '+fmt(balance)+'</div>':'<div style="font-size:11px;color:var(--green);margin-top:2px">Cleared</div>')+
+      '</div>';
+    card.appendChild(top);
+
+    // ── COPY FIELDS ──
+    const copySection = document.createElement('div');
+    copySection.className = 'copy-section';
+    const copyFields = [
+      {label:'Customer Name', val:o.name},
+      {label:'Phone Number',  val:o.phone||''},
+      {label:'Instagram',     val:o.insta||''},
+      {label:'Address',       val:o.address||''},
+    ].filter(f=>f.val);
+
+    copyFields.forEach(f=>{
+      const row = document.createElement('div');
+      row.className = 'copy-field';
+      const info = document.createElement('div');
+      info.className = 'copy-field-info';
+      info.innerHTML = '<div class="copy-field-label">'+f.label+'</div><div class="copy-field-value">'+f.val+'</div>';
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.textContent = '📋 Copy';
+      btn.addEventListener('click', (function(val){ return function(){ copyText(val,this); }; })(f.val));
+      row.appendChild(info);
+      row.appendChild(btn);
+      copySection.appendChild(row);
+    });
+    card.appendChild(copySection);
+
+    // ── PRODUCT BOX ──
+    if(o.product||o.address) {
+      const prod = document.createElement('div');
+      prod.className = 'order-product';
+      prod.textContent = (o.product ? '📦 '+o.product : '⚠️ Product not set') + (o.address ? ' · 📍 '+o.address : '');
+      card.appendChild(prod);
+    }
+
+    // ── STATUS ROW ──
+    const statusRow = document.createElement('div');
+    statusRow.className = 'order-status-row';
+    statusRow.innerHTML =
+      '<span class="status-pill '+sc.cls+'">'+sc.label+'</span>' +
+      '<span class="pay-type-pill '+(o.payType==='cod'?'pt-cod':'pt-prepaid')+'">'+(o.payType==='cod'?'COD':'Prepaid')+'</span>' +
+      (o.fromForm?'<span style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;">Form</span>':'')+
+      '<span class="order-meta">by '+(o.by||'—')+'</span>';
+    card.appendChild(statusRow);
+
+    // ── NOTE ──
+    if(o.note) {
+      const note = document.createElement('div');
+      note.style.cssText = 'font-size:12px;color:var(--muted);margin-top:8px';
+      note.textContent = '💬 '+o.note;
+      card.appendChild(note);
+    }
+
+    // ── ACTION BUTTONS ──
+    const actions = document.createElement('div');
+    actions.className = 'order-actions';
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'action-btn edit';
+    editBtn.textContent = '✏️ Edit';
+    editBtn.onclick = function(){ editOrder(o.id); };
+
+    const statusBtn = document.createElement('button');
+    statusBtn.className = 'action-btn status';
+    statusBtn.textContent = '🔄 Status';
+    statusBtn.onclick = function(){ openStatusModal(o.id); };
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'action-btn del';
+    delBtn.textContent = '🗑';
+    delBtn.onclick = function(){ deleteOrder(o.id); };
+
+    actions.appendChild(editBtn);
+    actions.appendChild(statusBtn);
+
+    if(needsAttention) {
+      const collectBtn = document.createElement('button');
+      collectBtn.className = 'action-btn collect';
+      collectBtn.textContent = '💛 Collect';
+      collectBtn.onclick = function(){ openStatusModal(o.id); };
+      actions.appendChild(collectBtn);
+    }
+
+    actions.appendChild(delBtn);
+    card.appendChild(actions);
+
+    list.appendChild(card);
+  });
+}
+
+
+function setOrderFilter(f) {
+  const byKey = SC[f];
+  orderFilter = byKey ? byKey.label : f;
+  if(currentSection==='orders') renderOrders();
+}
+
+// PAY TYPE
+function setPayType(t) {
+  selectedPayType = t;
+  document.getElementById('payBtnCod').classList.toggle('active', t==='cod');
+  document.getElementById('payBtnPrepaid').classList.toggle('active', t==='prepaid');
+  document.getElementById('codAdvanceBox').style.display = t==='cod' ? 'block' : 'none';
+  document.getElementById('prepaidPaidBox').style.display = t==='prepaid' ? 'block' : 'none';
+  // Auto-set status
+  if(t==='prepaid') {
+    selectStatus('paid', document.querySelector('.status-opt.s-paid'));
+  } else {
+    selectStatus('ordered', document.querySelector('.status-opt.s-ordered'));
+  }
+}
+
+function onTotalChange() {
+  // If prepaid, auto-fill paid = total
+  if(selectedPayType==='prepaid') {
+    const total = document.getElementById('oTotal').value;
+    document.getElementById('oPaid').value = total;
+  }
+}
+
+function openNewOrderModal() {
+  editingOrderId = null;
+  document.getElementById('orderModalTitle').textContent = 'New Order';
+  document.getElementById('orderModalSub').textContent = 'Fill in customer & payment details';
+  document.getElementById('oId').value = 'ORD-'+Date.now().toString().slice(-5);
+  ['oName','oPhone','oProduct','oAddress','oNote'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('oTotal').value='';
+  document.getElementById('oAdvance').value='';
+  document.getElementById('oPaid').value='';
+  selectedStatus='ordered'; selectedPayType='cod';
+  setPayType('cod');
+  document.querySelectorAll('#statusGrid .status-opt').forEach(b=>b.classList.remove('selected'));
+  document.querySelector('#statusGrid .s-ordered')?.classList.add('selected');
+  document.getElementById('newOrderModal').classList.add('open');
+}
+
+function editOrder(id) {
+  const o = orders.find(o=>o.id===id);
+  if(!o) return;
+  editingOrderId = id;
+  document.getElementById('orderModalTitle').textContent = 'Edit Order';
+  document.getElementById('orderModalSub').textContent = '#'+o.orderId+' · '+o.name;
+  document.getElementById('oId').value = o.orderId;
+  document.getElementById('oName').value = o.name;
+  document.getElementById('oPhone').value = o.phone||'';
+  document.getElementById('oProduct').value = o.product||'';
+  document.getElementById('oAddress').value = o.address||'';
+  document.getElementById('oTotal').value = o.total;
+  document.getElementById('oAdvance').value = o.advance||'';
+  document.getElementById('oPaid').value = o.paid||'';
+  document.getElementById('oNote').value = o.note||'';
+  selectedStatus = o.status;
+  selectedPayType = o.payType||'cod';
+  setPayType(selectedPayType);
+  document.querySelectorAll('#statusGrid .status-opt').forEach(b=>b.classList.remove('selected'));
+  document.querySelector(`#statusGrid .s-${o.status}`)?.classList.add('selected');
+  document.getElementById('newOrderModal').classList.add('open');
+}
+
+function selectStatus(s, el) {
+  selectedStatus = s;
+  const grid = el?.closest('.status-grid')||document.getElementById('statusGrid');
+  grid.querySelectorAll('.status-opt').forEach(b=>b.classList.remove('selected'));
+  el?.classList.add('selected');
+}
+
+async function saveOrder() {
+  const name = document.getElementById('oName').value.trim();
+  if(!name){showToast('⚠️ Enter customer name');return;}
+  const total = parseFloat(document.getElementById('oTotal').value)||0;
+  if(!total){showToast('⚠️ Enter total amount');return;}
+  const advance = parseFloat(document.getElementById('oAdvance').value)||0;
+  const paid = parseFloat(document.getElementById('oPaid').value)||0;
+
+  // Auto-set smart status
+  let status = selectedStatus;
+  const totalPaid = advance + paid;
+  if(selectedPayType==='prepaid' && paid>=total) status='paid';
+  if(selectedPayType==='cod' && advance>0 && totalPaid<total && status==='ordered') status='advance';
+  // partial removed
+
+  const isNew = !editingOrderId;
+  const existingOrder = isNew ? null : orders.find(o=>o.id===editingOrderId);
+
+  const order = {
+    id: editingOrderId||Date.now().toString(),
+    orderId: document.getElementById('oId').value||'ORD-'+Date.now().toString().slice(-5),
+    name, total, advance, paid, status,
+    payType: selectedPayType,
+    phone: document.getElementById('oPhone').value.trim(),
+    product: document.getElementById('oProduct').value.trim(),
+    address: document.getElementById('oAddress').value.trim(),
+    note: document.getElementById('oNote').value.trim(),
+    by: currentUser,
+    date: existingOrder?.date||new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    updatedBy: currentUser,
+  };
+
+  // Log advance as transaction if new COD order with advance
+  if(isNew && selectedPayType==='cod' && advance>0) {
+    transactions.unshift({
+      id:'tx'+Date.now().toString(),type:'income',amount:advance,
+      cat:'c12',pool:'p1',note:`COD Advance from ${name} #${order.orderId}`,
+      order:order.orderId,by:currentUser,date:new Date().toISOString()
+    });
+  }
+  // Log prepaid full payment as transaction if new
+  if(isNew && selectedPayType==='prepaid' && paid>0) {
+    transactions.unshift({
+      id:'tx'+Date.now().toString(),type:'income',amount:paid,
+      cat:'c10',pool:'p1',note:`Prepaid from ${name} #${order.orderId}`,
+      order:order.orderId,by:currentUser,date:new Date().toISOString()
+    });
+  }
+
+  if(editingOrderId) {
+    const idx = orders.findIndex(o=>o.id===editingOrderId);
+    if(idx!==-1) orders[idx]=order;
+  } else {
+    orders.unshift(order);
+  }
+
+  closeModal('newOrderModal');
+  showToast(isNew?`✅ Order added (${selectedPayType.toUpperCase()})`:'✅ Order updated!');
+  await saveToCloud();
+  renderOrders();
+}
+
+async function deleteOrder(id) {
+  if(!confirm('Delete this order? This cannot be undone.')) return;
+  orders = orders.filter(o=>o.id!==id);
+  await saveToCloud();
+  renderOrders();
+}
+
+// STATUS MODAL
+function openStatusModal(id) {
+  statusUpdateOrderId = id;
+  const o = orders.find(o=>o.id===id);
+  if(!o) return;
+  const advance = o.advance||0;
+  const paid = o.paid||0;
+  const balance = o.total - advance - paid;
+  document.getElementById('statusOrderInfo').textContent=`#${o.orderId} · ${o.name} · ${fmt(o.total)}`;
+
+  document.getElementById('statusUpdateGrid').innerHTML = STATUS_ORDER.map(s=>
+    `<button class="status-opt ${SC[s].cls} ${o.status===s?'selected':''}" onclick="selectStatusInModal('${s}',this)">
+      ${SC[s].icon} ${SC[s].label}
+    </button>`
+  ).join('');
+  selectedStatus = o.status;
+
+  // Show collect section if balance pending
+  const cs = document.getElementById('collectSection');
+  if(balance > 0) {
+    cs.style.display='block';
+    document.getElementById('collectTotal').textContent=fmt(o.total);
+    document.getElementById('collectPaid').textContent=fmt(advance+paid);
+    document.getElementById('collectDue').textContent=fmt(balance);
+    document.getElementById('collectAmt').value=balance;
+  } else {
+    cs.style.display='none';
+  }
+  document.getElementById('statusModal').classList.add('open');
+}
+
+function selectStatusInModal(s, el) {
+  selectedStatus = s;
+  document.querySelectorAll('#statusUpdateGrid .status-opt').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+async function confirmStatusUpdate() {
+  const o = orders.find(o=>o.id===statusUpdateOrderId);
+  if(!o) return;
+  const collectAmt = parseFloat(document.getElementById('collectAmt').value)||0;
+  const advance = o.advance||0;
+  const paid = o.paid||0;
+  const balance = o.total - advance - paid;
+
+  if(collectAmt > 0 && balance > 0) {
+    const collecting = Math.min(collectAmt, balance);
+    o.paid = paid + collecting;
+    // Log as transaction
+    transactions.unshift({
+      id:'tx'+Date.now().toString(), type:'income', amount:collecting,
+      cat:'c9', pool:'p1',
+      note:`Balance collected from ${o.name} #${o.orderId}`,
+      order:o.orderId, by:currentUser, date:new Date().toISOString()
+    });
+    // Auto upgrade status if fully cleared
+    const newBalance = o.total - advance - o.paid;
+    if(newBalance<=0 && selectedStatus==='advance') selectedStatus='paid';
+    if(newBalance<=0 && selectedStatus==='partial') selectedStatus='paid';
+  }
+
+  o.status = selectedStatus;
+  o.updatedAt = new Date().toISOString();
+  o.updatedBy = currentUser;
+
+  closeModal('statusModal');
+  showToast(`✅ Status → ${SC[selectedStatus].label}`);
+  await saveToCloud();
+  renderOrders();
+  if(currentSection==='home') renderHome();
+}
+
+// ══════════════════════════════════════════
+// ADD TRANSACTION
+// ══════════════════════════════════════════
+function setType(t) {
+  txType=t;
+  document.getElementById('btnExp').classList.toggle('active',t==='expense');
+  document.getElementById('btnInc').classList.toggle('active',t==='income');
+  renderCatOptions();
+}
+function renderAddForm(){renderCatOptions();}
+function renderCatOptions(){
+  const filtered=categories.filter(c=>c.type===txType);
+  document.getElementById('txCat').innerHTML=filtered.map(c=>`<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+  catChanged();
+  document.getElementById('orderGroup').style.display=txType==='income'?'block':'none';
+}
+function catChanged(){
+  const cat=categories.find(c=>c.id===document.getElementById('txCat').value);
+  const ps=document.getElementById('txPool');
+  if(cat?.pool){
+    const p=pools.find(p=>p.id===cat.pool);
+    ps.innerHTML=`<option value="${cat.pool}">${p?.icon} ${p?.name}</option>`;
+    pools.filter(p=>p.id!==cat.pool).forEach(p=>{ps.innerHTML+=`<option value="${p.id}">${p.icon} ${p.name}</option>`;});
+  } else {
+    ps.innerHTML=pools.map(p=>`<option value="${p.id}">${p.icon} ${p.name}</option>`).join('');
+  }
+}
+async function saveTransaction(){
+  if(!currentUser){showToast('⚠️ Select your name first');switchUser();return;}
+  const amt=parseFloat(document.getElementById('txAmt').value);
+  if(!amt||amt<=0){showToast('⚠️ Enter a valid amount');return;}
+  const catId=document.getElementById('txCat').value;
+  const cat=categories.find(c=>c.id===catId);
+  const tx={id:Date.now().toString(),type:txType,amount:amt,cat:catId,pool:document.getElementById('txPool').value,note:document.getElementById('txNote').value.trim(),order:document.getElementById('txOrder')?.value?.trim()||'',by:currentUser,date:new Date().toISOString()};
+  transactions.unshift(tx);
+  document.getElementById('txAmt').value='';
+  document.getElementById('txNote').value='';
+  if(document.getElementById('txOrder')) document.getElementById('txOrder').value='';
+  showToast(`${txType==='income'?'💰':'💸'} ${fmt(amt)} · ${cat?.name||''}`);
+  await saveToCloud();
+  setTimeout(()=>goTo('home'),600);
+}
+
+// SAVINGS
+function openSavingsModal(){renderHome();document.getElementById('savingsModal').classList.add('open');}
+async function moveToSavings(){
+  const amt=parseFloat(document.getElementById('saveAmt').value);
+  if(!amt||amt<=0){showToast('⚠️ Enter amount');return;}
+  const tx={id:Date.now().toString(),type:'transfer',amount:amt,cat:'transfer',pool:'p1',toPool:'p5',note:document.getElementById('saveNote').value.trim()||'Profit transfer',by:currentUser,date:new Date().toISOString()};
+  transactions.unshift(tx);
+  document.getElementById('saveAmt').value='';
+  document.getElementById('saveNote').value='';
+  closeModal('savingsModal');
+  showToast(`🏦 ${fmt(amt)} moved to Savings!`);
+  await saveToCloud();
+  goTo('home');
+}
+
+// HISTORY
+function renderHistory(){
+  const filters=['All','Revenue','Expense','Transfer',...pools.map(p=>p.name)];
+  document.getElementById('filterRow').innerHTML=filters.map(f=>
+    `<button class="filter-chip ${f===activeFilter?'active':''}" onclick="setFilter('${f}')">${f}</button>`
+  ).join('');
+  let filtered=transactions;
+  if(activeFilter==='Revenue') filtered=transactions.filter(t=>t.type==='income');
+  else if(activeFilter==='Expense') filtered=transactions.filter(t=>t.type==='expense');
+  else if(activeFilter==='Transfer') filtered=transactions.filter(t=>t.type==='transfer');
+  else if(activeFilter!=='All'){const pool=pools.find(p=>p.name===activeFilter);if(pool)filtered=transactions.filter(t=>t.pool===pool.id||t.toPool===pool.id);}
+  document.getElementById('historyTitle').textContent=`${activeFilter} (${filtered.length})`;
+  if(!filtered.length){document.getElementById('historyList').innerHTML='<div class="empty"><div class="empty-icon">📭</div>No transactions yet</div>';return;}
+  document.getElementById('historyList').innerHTML=filtered.map(tx=>{
+    const pool=pools.find(p=>p.id===tx.pool)||{icon:'?',color:'#888',name:'?'};
+    const cat=categories.find(c=>c.id===tx.cat)||{name:tx.type==='transfer'?'Transfer':'?'};
+    const d=new Date(tx.date);
+    const ds=d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+    const amtClass=tx.type==='income'?'credit':tx.type==='transfer'?'transfer':'debit';
+    const sign=tx.type==='income'?'+':tx.type==='transfer'?'⇄':'-';
+    const byColor=tx.by==='Husband'?'#000000':'#555555';
+    return`<div class="tx-item">
+      <div class="tx-left">
+        <div class="tx-dot" style="background:#f0f0f0">${pool.icon}</div>
+        <div><div class="tx-name">${cat.name}</div>
+        <div class="tx-meta">${ds}${tx.note?' · '+tx.note:''}${tx.order?' · #'+tx.order:''}</div>
+        ${tx.by?`<div class="tx-by" style="color:${byColor}">by ${tx.by}</div>`:''}
+        </div>
+      </div>
+      <div class="tx-amount ${amtClass}">${sign}${fmt(tx.amount)}</div>
+    </div>`;
+  }).join('');
+}
+function setFilter(f){activeFilter=f;renderHistory();}
+
+// SETUP
+function renderSetup(){
+  document.getElementById('userPillName').textContent=currentUser||'Not set';
+  document.getElementById('dataOrders').textContent=orders.length;
+  document.getElementById('dataTx').textContent=transactions.length;
+  document.getElementById('poolMgr').innerHTML=pools.map(p=>
+    `<div class="manage-row"><div style="display:flex;align-items:center;gap:10px"><span style="font-size:18px">${p.icon}</span><span style="font-weight:600">${p.name}</span><span style="width:10px;height:10px;border-radius:50%;background:${p.color};display:inline-block"></span></div><span style="font-size:11px;color:var(--muted)">built-in</span></div>`
+  ).join('');
+  document.getElementById('catMgr').innerHTML=categories.map((c,i)=>
+    `<div class="manage-row"><div style="display:flex;align-items:center;gap:8px"><span>${c.icon||'📌'}</span><span style="font-size:13px;font-weight:500">${c.name}</span><span style="font-size:10px;color:var(--muted);background:var(--surface);padding:2px 6px;border-radius:6px">${c.type}</span></div><button class="del-btn" onclick="delCat(${i})">✕</button></div>`
+  ).join('');
+}
+async function addCategory(){
+  const name=document.getElementById('newCatName').value.trim();
+  if(!name)return;
+  categories.push({id:'c'+Date.now(),name,type:'expense',pool:'p1',icon:'📌'});
+  document.getElementById('newCatName').value='';
+  await saveToCloud();renderSetup();showToast('✅ Category added!');
+}
+async function delCat(i){categories.splice(i,1);await saveToCloud();renderSetup();}
+function copyURL(){
+  const url=window.location.href;
+  if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>showToast('📋 URL copied!'));
+  else alert(url);
+}
+
+// UTILS
+function fmt(n){return'₹'+Math.abs(n).toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showToast(msg){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300);},2500);
+}
+
+// ══════════════════════════════════════════
+// COPY HELPER
+// ══════════════════════════════════════════
+function buildCopyFields(orderId, name, phone, insta, address) {
+  const container = document.getElementById('cf-'+orderId);
+  if(!container) return;
+  const fields = [
+    {label:'Customer Name', val:name},
+    {label:'Phone Number', val:phone},
+    {label:'Instagram', val:insta},
+    {label:'Delivery Address', val:address},
+  ].filter(f=>f.val);
+  container.innerHTML = fields.map(f=>{
+    const safeId = 'cpbtn-'+orderId+'-'+f.label.replace(/\s/g,'');
+    return '<div class="copy-field">' +
+      '<div class="copy-field-info">' +
+        '<div class="copy-field-label">'+f.label+'</div>' +
+        '<div class="copy-field-value">'+f.val+'</div>' +
+      '</div>' +
+      '<button class="copy-btn" id="'+safeId+'">📋 Copy</button>' +
+    '</div>';
+  }).join('');
+  fields.forEach(f=>{
+    const safeId = 'cpbtn-'+orderId+'-'+f.label.replace(/\s/g,'');
+    const btn = document.getElementById(safeId);
+    if(btn) btn.addEventListener('click', function(){ copyText(f.val, this); });
+  });
+}
+
+function copyText(text, btn) {
+  if(navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✅ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '✅ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+  }
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+if(currentUser){
+  document.getElementById('loggedInAs').textContent=currentUser==='Husband'?'Husband':'♾️ Wife';
+  document.getElementById('userPillName').textContent=currentUser==='Husband'?'Husband':'♾️ Wife';
+  document.getElementById('userModal').classList.remove('open');
+  loadFromCloud();
+  goTo('add');
+}
+</script>
+</body>
+</html>
